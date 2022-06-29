@@ -1,19 +1,21 @@
-const direction = {
-    NORTH: [90],
-    SOUTH: [-90, 270],
-    EAST: [0, 360],
-    WEST: [180, -180]
-};
+const direction = [
+    { name: "NORTH", values: [90], movementType: "decrease", axle: "Y" },
+    { name: "SOUTH", values: [-90, 270], movementType: "increase", axle: "Y" },
+    { name: "EAST", values: [0, 360], movementType: "increase", axle: "X" },
+    { name: "WEST", values: [180, -180], movementType: "decrease", axle: "X" },
+];
 
 const commands = [
     "PLACE",
     "MOVE",
     "LEFT",
     "RIGHT",
-    "REPORT"
+    "REPORT",
+    "FINISH"
 ];
 
-let position: { X: number, Y: number, F: typeof direction };
+let position: { X: number, Y: number, F: {name:string, values:any, movementType: string, axle: string } };
+let isFirstCommand: boolean;
 
 const readline = require('readline');
 
@@ -28,96 +30,138 @@ const SQUARE_LIMIT_SIZE = 5;
 const COMMAND_TO_POSITIONING: string = commands[0];
 
 
-function validateResponse(response:any, isFirstCommand:boolean = false) {
-    const arrayResponse = String(response).split(' ');
-    const inputCommand = arrayResponse[0];
-    const isCommand:boolean = commands.includes(inputCommand);
-    let isValid:boolean = false;
+function validateCommand(inputArray: Array<string>) {
+    const inputCommand = inputArray[0].toUpperCase();
 
-    if (isFirstCommand) {
-        const isPlaceCommand = inputCommand === COMMAND_TO_POSITIONING;
-        const inputPositions = arrayResponse[1].split(',');
-        
-        isValid = validatePositions(inputPositions) && isPlaceCommand;
-    } else {
-        // TODO
-    }
-
-    return isCommand;
+    return commands.includes(inputCommand);
 }
 
-function validatePositions(inputPosition: Array<string>) {
-    const positionX = inputPosition[0];
-    const positionY = inputPosition[1];
+async function receivingCommand() {
+    let command = '';
+    isFirstCommand = true;
 
-    const inputDirection = inputPosition[2];
-    let positionF;
+    while(command !== "FINISH") {
+        const positionateQuestion: string = "Position the robot to initiate: \n";
+        const sequenceQuestion: string =  "Write a valid command to move the robot: \n";
 
-    const validateFacing = () => {
-        const findDirection = (direction as any)[inputDirection];
-        positionF = findDirection? findDirection : null;   
+        const currentlyQuestion: string = isFirstCommand? positionateQuestion : sequenceQuestion;
+
+        const response = await readlineQuestion(currentlyQuestion);
+        const arrayResponse = String(response).split(' ');
+
+        const isAValidCommand = validateCommand(arrayResponse);
+
+        if (isAValidCommand) {
+            try {
+                command = arrayResponse[0].toUpperCase();
+                processCommand(arrayResponse);
+            } catch (error) {
+                console.warn(error);
+            }
+        } else {
+            console.warn(`The entry ${response} is wrong! \n Please, fix it and try again.`);
+        }
     }
+}
+
+function processCommand(commandArray: Array<string>) {
+    const inputCommand = commandArray[0].toUpperCase();
+
+    if (isFirstCommand && inputCommand !== "PLACE") {
+        throw new Error("To give position commands to robot, you may have place him on the table. \n Knowing that, insert a valid place command.");
+    }
+
+    switch (inputCommand) {
+        case "PLACE":
+            return place(commandArray);
+        case "MOVE":
+            return moveRobot();
+        case "LEFT":
+            return leftRotate();
+        case "RIGHT":
+            return rigthRotate();
+        case "REPORT":
+            return console.log(`${position.X},${position.Y},${position.F.name}`);
+        default:
+            break;    
+    }
+}
+
+function validatePosition(inputPosition: number) {
+    return inputPosition >= 0 && inputPosition < 5;
+}
+
+function place(commandArray: Array<string>) {
+    const inputPositions = commandArray[1].split(',');
+    const positionX = Number(inputPositions[0]);
+    const positionY = Number(inputPositions[1]);
+
+    const inputDirection = inputPositions[2];
+    const findDirection = direction.find(directionObject => directionObject.name === inputDirection.toUpperCase());
+
+    const positionF = findDirection? findDirection : null;
 
     if (positionF) {
-        
-        position = {
-            X: Number(positionX),
-            Y: Number(positionY),
-            F: positionF
+
+        const isPositionXValid = validatePosition(positionX);
+        const isPositionYvalid = validatePosition(positionX);
+
+        if (isPositionXValid && isPositionYvalid) {
+            position = {
+                X: positionX,
+                Y: positionY,
+                F: positionF
+            }
+            isFirstCommand = false;
+        } else {
+            throw new Error("Insert a valid value to place robot on table!");
         }
-
-        return true;
-    }
-    
-    return false;
-}
-
-async function dealingCommands() {
-    let command = false;
-
-    while(!command) {
-        const response = await readlineQuestion("Position the robot to initiate: ");
-
-        
-        console.log("Type response ", typeof response);
-        command = validateResponse(response, true);
+    } else {
+        throw new Error("Insert a valid value to facing!")
     }
 }
 
+function moveRobot() {
+    if (!isFirstCommand) {
 
-dealingCommands();
+        const validMovement = (positionToMove: typeof position) => {
+            let axleMovePosition = positionToMove.F.axle === "X"? positionToMove.X : positionToMove.Y;
+            const movement = positionToMove.F.movementType === 'increase'? (axleMovePosition) +1 : (axleMovePosition) -1;
+            const isPossibleToMove = validatePosition(movement);
+                
+            return isPossibleToMove? movement : axleMovePosition;
+        };
 
-
-function place(position_input:any) {
-    // TODO
+        if (position.F.axle === "X") { 
+            position.X = validMovement(position);
+        } else if (position.F.axle === "Y") {
+            position.Y = validMovement(position);
+        }
+    }
 }
 
+function leftRotate() {
+    if (!isFirstCommand) {
+        const changeDirection = position.F.values[0] + 90;
 
+        const findDirection = direction.find((direction) => direction.values.includes(changeDirection));
 
+        if (findDirection) {
+            position.F = findDirection;
+        }
+    }
+}
 
-// const question1 = () => {
-    //   return new Promise<void>((resolve, reject) => {
-    //     rl.question('q1 What do you think of Node.js? ', (answer) => {
-    //       console.log(`Thank you for your valuable feedback: ${answer}`)
-    //       resolve()
-    //     })
-    //   })
-    // }
-    
-    // const question2 = () => {
-    //   return new Promise((resolve, reject) => {
-    //     rl.question('q2 What do you think of Node.js? ', (answer) => {
-    //       console.log(`Thank you for your valuable feedback: ${answer}`)
-    //       resolve()
-    //     })
-    //   })
-    // }
-    
-    // const main = async () => {
-    //   await question1()
-    //   await question2()
-    //   rl.close()
-    // }
-    
-    // main()
-    // https://stackoverflow.com/questions/36540996/how-to-take-two-consecutive-input-with-the-readline-module-of-node-js/48790818#48790818
+function rigthRotate() {
+    if (!isFirstCommand) {
+        const changeDirection = position.F.values[0] - 90;
+
+        const findDirection = direction.find((direction) => direction.values.includes(changeDirection));
+
+        if (findDirection) {
+            position.F = findDirection;
+        }
+    }
+}
+
+receivingCommand();
