@@ -14,7 +14,7 @@ const commands = [
     "FINISH"
 ];
 
-let position: { X: number, Y: number, F: {name:string, values:any, movementType: string, axle: string } };
+let actualPosition: { X: number, Y: number, F: {name:string, values:any, movementType: string, axle: string } };
 let isFirstCommand: boolean;
 
 const readline = require('readline');
@@ -27,8 +27,6 @@ const readlineInterface = readline.createInterface({
 const readlineQuestion = (questionText:string) => new Promise(resolve => readlineInterface.question(questionText, resolve));
 
 const SQUARE_LIMIT_SIZE = 5;
-const COMMAND_TO_POSITIONING: string = commands[0];
-
 
 function validateCommand(inputArray: Array<string>) {
     const inputCommand = inputArray[0].toUpperCase();
@@ -81,14 +79,14 @@ function processCommand(commandArray: Array<string>) {
         case "RIGHT":
             return rigthRotate();
         case "REPORT":
-            return console.log(`${position.X},${position.Y},${position.F.name}`);
+            return console.log(`${actualPosition.X},${actualPosition.Y},${actualPosition.F.name}`);
         default:
             break;    
     }
 }
 
 function validatePosition(inputPosition: number) {
-    return inputPosition >= 0 && inputPosition < 5;
+    return inputPosition >= 0 && inputPosition < SQUARE_LIMIT_SIZE;
 }
 
 function place(commandArray: Array<string>) {
@@ -104,10 +102,10 @@ function place(commandArray: Array<string>) {
     if (positionF) {
 
         const isPositionXValid = validatePosition(positionX);
-        const isPositionYvalid = validatePosition(positionX);
+        const isPositionYValid = validatePosition(positionY);
 
-        if (isPositionXValid && isPositionYvalid) {
-            position = {
+        if (isPositionXValid && isPositionYValid) {
+            actualPosition = {
                 X: positionX,
                 Y: positionY,
                 F: positionF
@@ -124,42 +122,37 @@ function place(commandArray: Array<string>) {
 function moveRobot() {
     if (!isFirstCommand) {
 
-        const validMovement = (positionToMove: typeof position) => {
-            let axleMovePosition = positionToMove.F.axle === "X"? positionToMove.X : positionToMove.Y;
-            const movement = positionToMove.F.movementType === 'increase'? (axleMovePosition) +1 : (axleMovePosition) -1;
-            const isPossibleToMove = validatePosition(movement);
+        const returnNextPosition = () => {
+            let actualAxlesPosition = actualPosition.F.axle === "X"? actualPosition.X : actualPosition.Y;
+            const nextPosition = actualPosition.F.movementType === 'increase'? (actualAxlesPosition) + 1 : (actualAxlesPosition) - 1;
+            const isAValidPosition = validatePosition(nextPosition);
                 
-            return isPossibleToMove? movement : axleMovePosition;
+            return isAValidPosition? nextPosition : actualAxlesPosition;
         };
 
-        if (position.F.axle === "X") { 
-            position.X = validMovement(position);
-        } else if (position.F.axle === "Y") {
-            position.Y = validMovement(position);
+        if (actualPosition.F.axle === "X") { 
+            actualPosition.X = returnNextPosition();
+        } else if (actualPosition.F.axle === "Y") {
+            actualPosition.Y = returnNextPosition();
         }
     }
 }
 
 function leftRotate() {
-    if (!isFirstCommand) {
-        const changeDirection = position.F.values[0] + 90;
-
-        const findDirection = direction.find((direction) => direction.values.includes(changeDirection));
-
-        if (findDirection) {
-            position.F = findDirection;
-        }
-    }
+    rotate(90);
 }
 
 function rigthRotate() {
+    rotate(-90);
+}
+
+function rotate(rotationDirection: number) {
     if (!isFirstCommand) {
-        const changeDirection = position.F.values[0] - 90;
+        const directionToRotate = actualPosition.F.values[0] + rotationDirection;
+        const findDirectionObject = direction.find((direction) => direction.values.includes(directionToRotate));
 
-        const findDirection = direction.find((direction) => direction.values.includes(changeDirection));
-
-        if (findDirection) {
-            position.F = findDirection;
+        if (findDirectionObject) {
+            actualPosition.F = findDirectionObject;
         }
     }
 }
