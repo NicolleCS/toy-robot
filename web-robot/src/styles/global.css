@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    @apply bg-zinc-800 text-gray-100 pt-10 pl-12;
+    -webkit-font-smoothing: antialiased;
+}
+
+.direction-buttons {
+    @apply rounded-lg p-2 h-12 w-12 bg-yellow-800 hover:bg-yellow-500 flex justify-center;
+}
+
+#place-button input {
+    @apply h-10 w-52 rounded-lg border-4 border-yellow-800 p-3 text-black text-sm focus:border-black focus:outline-none;
+}
+
+#place-button button {
+    @apply bg-yellow-800 w-52 h-10 text-black font-bold rounded-lg hover:bg-yellow-500;
+}
