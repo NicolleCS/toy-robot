@@ -1,0 +1,70 @@
+Input and Output
+
+Case 1:
+
+MOVE // output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
+LEFT // output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
+RIGHT // output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
+REPORT // output -> output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
+PLACE 0,0,NORTH
+REPORT // output -> 0,0,NORTH
+
+Case 2:
+
+PLACE 0,0,SOUTH
+MOVE
+REPORT // output: 0,1,SOUTH
+LEFT
+LEFT
+LEFT
+REPORT // output: 0,1,WEST
+LEFT
+LEFT 
+REPORT // output: 0,1,EAST
+
+Case 3:
+
+PLACE 3,2,NORTH
+MOVE
+REPORT // output: 3,1,NORTH
+RIGHT
+RIGHT
+RIGHT
+REPORT // output: 3,1,WEST
+RIGHT
+RIGHT
+REPORT // output: 3,1,EAST
+
+Case 4:
+
+PLACE 1,4,EAST
+MOVE
+MOVE
+MOVE
+REPORT // output -> 4,4,EAST
+MOVE
+MOVE
+REPORT // output -> 4,4,EAST
+
+
+Case 5:
+
+PLACE 0,9,NORTH // output -> Error: Insert a valid value to place robot on table!
+PLACE 9,0,NORTH // output -> Error: Insert a valid value to place robot on table!
+PLACE 0,0,NONE // output -> Error: Insert a valid value to place robot on table!
+PLACE 0,0,SOUTH
+REPORT // output -> 0,0,SOUTH
+
+Case 6:
+
+PLACE 0,0SOUTH // output -> Error -> Insert a valid value to place robot on table!
+PLACE 0,0,SOUTH
+move 
+Move
+MOVE
+REPORT // output -> 0,3,SOUTH
+
+
+
+
+
