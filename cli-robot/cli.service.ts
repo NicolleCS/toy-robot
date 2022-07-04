@@ -26,7 +26,7 @@ async function receivingCommand() {
     const robotController = new RobotController(robot, tabletop);
 
     while(command !== "FINISH") {
-        const currentlyQuestion: string =  "Write a valid command to place the robot: \n";
+        const currentlyQuestion: string =  "Write a valid command to move the robot: \n";
         const response = await readlineQuestion(currentlyQuestion);
 
         const arrayResponse = String(response).split(' ');
