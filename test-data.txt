@@ -5,7 +5,7 @@ Case 1:
 MOVE // output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
 LEFT // output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
 RIGHT // output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
-REPORT // output -> output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
+REPORT // output -> Error - To give position commands to robot, you may have place him on the table. Knowing that, insert a valid place command.
 PLACE 0,0,NORTH
 REPORT // output -> 0,0,NORTH
 
