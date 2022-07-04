@@ -29,4 +29,4 @@ npm start
 
 ## Test Data
 
-In main paste, there is a file with cases and their expected output to help on tests.
+In main folder, there is a file with cases and their expected output to help on tests.
