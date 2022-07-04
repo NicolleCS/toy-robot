@@ -19,7 +19,16 @@ export function Table() {
         </div>
         <div className="grid grid-cols-5 gap-10 mt-5">
             <div className="col-span-3 justify-self-end">
-                <PlaceButton/>                
+                <div className="w-fit h-fit flex">
+                    <div className="bg-white/[.50] w-56 h-28 p-2 rounded-lg self-end justify-self-start mr-56">
+                        <strong className="text-base font-bold">TIPS</strong>
+                        <p className="text-[0.70rem] font-medium w-52">The origin (0,0) is the NORTH WEST most corner.</p>
+                        <p className="text-[0.70rem] font-medium mt-1 w-52">You have to place the robot on the tabletop before moving.</p>
+                    </div>
+                    <div className="w-fit h-fit">
+                        <PlaceButton/>       
+                    </div>
+                </div>
             </div>
         </div>
     </div>   
