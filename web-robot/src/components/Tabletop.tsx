@@ -1,4 +1,4 @@
-import { direction, RobotController, TableTop, ToyRobot } from "../../../cli-robot/toy-robot.service";
+import { direction, RobotController, TableTop, ToyRobot } from "../../../main/toy-robot.service";
 import { callMovement, changePosition, makeRobotWalk, Robot } from "./Robot";
 import { getSquarePosition, TabletopRank } from "./TabletopRank";
 
@@ -27,8 +27,8 @@ export function MoveRobot(directionType?: string) {
     }
 }
 
-export function place(position: string) {
-    const callPlaceCommand = robotController.placeRobot(position);;
+export function Place(position: string) {
+    const callPlaceCommand = robotController.placeRobot(position);
 
     if (callPlaceCommand) {
         MoveRobot();

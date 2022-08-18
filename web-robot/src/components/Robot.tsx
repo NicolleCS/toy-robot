@@ -1,4 +1,4 @@
-import { ToyRobot, TableTop, RobotController } from '../../../cli-robot/toy-robot.service';
+import { ToyRobot, TableTop, RobotController } from '../../../main/toy-robot.service';
 
 const ROBOT_SIZE = 160;
 const SQUARE_SIZE = 50;

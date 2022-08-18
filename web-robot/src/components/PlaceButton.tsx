@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { place } from "./Tabletop";
+import { Place } from "./Tabletop";
 
 export function PlaceButton () {
     const [state, setState] = useState({
@@ -11,7 +11,7 @@ export function PlaceButton () {
     }
 
     function onClick() {
-        place(state.value);
+        Place(state.value);
     }
 
     return (
